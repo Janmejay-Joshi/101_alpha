@@ -8,16 +8,6 @@ import math
 #  3. Non-Integer number of days d is converted to floor(d)
 
 
-def log(x):
-    """Alias for math.log(x)"""
-    return math.log(x)
-
-
-def sign(x):
-    """Alias for np.sign(x)"""
-    return np.sign(x)
-
-
 def rank(x):
     """Cross-Sectional Rank"""
     pass
@@ -46,11 +36,6 @@ def scale(x, a):
 def delta(x, d):
     """Today's value of x minus the value of x, d days ago"""
     pass
-
-
-def signedpower(x, a):
-    """x^a"""
-    return math.pow(x, a)
 
 
 def decay_linear(x, d):
@@ -90,16 +75,6 @@ def ts_rank(x, d):
     pass
 
 
-def min(x, d):
-    """Alias for ts_min(x, d)"""
-    return ts_min(x, d)
-
-
-def max(x, d):
-    """Alias for ts_max(x, d)"""
-    return ts_max(x, d)
-
-
 def sum(x, d):
     """Time-series sum over the Past d days"""
     pass
@@ -113,3 +88,31 @@ def product(x, d):
 def stddev(x, d):
     """Moving Time-series standard deviation over the Past d days"""
     pass
+
+
+## Alias Functions
+
+
+def log(x):
+    """Alias for math.log(x)"""
+    return math.log(x)
+
+
+def sign(x):
+    """Alias for np.sign(x)"""
+    return np.sign(x)
+
+
+def signedpower(x, a):
+    """Alias for math.pow(x, a)"""
+    return math.pow(x, a)
+
+
+def min(x, d):
+    """Alias for ts_min(x, d)"""
+    return ts_min(x, d)
+
+
+def max(x, d):
+    """Alias for ts_max(x, d)"""
+    return ts_max(x, d)
