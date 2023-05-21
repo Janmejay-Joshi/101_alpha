@@ -10,20 +10,11 @@ from src.utils.operators import *
 
 
 def alpha_1(close, returns):
-    return (
-        rank(
-            ts_argmax(
-                signedpower((stddev(returns, 20) if (returns < 0) else close), 2.0), 5
-            )
-        )
-        - 0.5
-    )
+    return rank(ts_argmax(signedpower((stddev(returns, 20) if (returns < 0) else close), 2.0), 5)) - 0.5
 
 
 def alpha_2(open, close, volume):
-    return -1 * correlation(
-        rank(delta(log(volume), 2)), rank(((close - open) / open)), 6
-    )
+    return -1 * correlation(rank(delta(log(volume), 2)), rank(((close - open) / open)), 6)
 
 
 def alpha_3(open, volume):
@@ -43,28 +34,18 @@ def alpha_6(open, volume):
 
 
 def alpha_7(close, volume, adv20):
-    return (
-        ((-1 * ts_rank(abs(delta(close, 7)), 60)) * sign(delta(close, 7)))
-        if (adv20 < volume)
-        else (-1 * 1)
-    )
+    return ((-1 * ts_rank(abs(delta(close, 7)), 60)) * sign(delta(close, 7))) if (adv20 < volume) else (-1 * 1)
 
 
 def alpha_8(open, returns):
-    return -1 * rank(
-        ((sum(open, 5) * sum(returns, 5)) - delay((sum(open, 5) * sum(returns, 5)), 10))
-    )
+    return -1 * rank(((sum(open, 5) * sum(returns, 5)) - delay((sum(open, 5) * sum(returns, 5)), 10)))
 
 
 def alpha_9(close):
     return (
         delta(close, 1)
         if (0 < ts_min(delta(close, 1), 5))
-        else (
-            delta(close, 1)
-            if (ts_max(delta(close, 1), 5) < 0)
-            else (-1 * delta(close, 1))
-        )
+        else (delta(close, 1) if (ts_max(delta(close, 1), 5) < 0) else (-1 * delta(close, 1)))
     )
 
 
@@ -73,19 +54,13 @@ def alpha_10(close):
         (
             delta(close, 1)
             if (0 < ts_min(delta(close, 1), 4))
-            else (
-                delta(close, 1)
-                if (ts_max(delta(close, 1), 4) < 0)
-                else (-1 * delta(close, 1))
-            )
+            else (delta(close, 1) if (ts_max(delta(close, 1), 4) < 0) else (-1 * delta(close, 1)))
         )
     )
 
 
 def alpha_11(close, volume, vwap):
-    return (rank(ts_max((vwap - close), 3)) + rank(ts_min((vwap - close), 3))) * rank(
-        delta(volume, 3)
-    )
+    return (rank(ts_max((vwap - close), 3)) + rank(ts_min((vwap - close), 3))) * rank(delta(volume, 3))
 
 
 def alpha_12(close, volume):
@@ -109,30 +84,19 @@ def alpha_16(high, volume):
 
 
 def alpha_17(close, volume, adv20):
-    return ((-1 * rank(ts_rank(close, 10))) * rank(delta(delta(close, 1), 1))) * rank(
-        ts_rank((volume / adv20), 5)
-    )
+    return ((-1 * rank(ts_rank(close, 10))) * rank(delta(delta(close, 1), 1))) * rank(ts_rank((volume / adv20), 5))
 
 
 def alpha_18(open, close):
-    return -1 * rank(
-        (
-            (stddev(abs((close - open)), 5) + (close - open))
-            + correlation(close, open, 10)
-        )
-    )
+    return -1 * rank(((stddev(abs((close - open)), 5) + (close - open)) + correlation(close, open, 10)))
 
 
 def alpha_19(close, returns):
-    return (-1 * sign(((close - delay(close, 7)) + delta(close, 7)))) * (
-        1 + rank((1 + sum(returns, 250)))
-    )
+    return (-1 * sign(((close - delay(close, 7)) + delta(close, 7)))) * (1 + rank((1 + sum(returns, 250))))
 
 
 def alpha_20(open, low, high, close):
-    return (
-        (-1 * rank((open - delay(high, 1)))) * rank((open - delay(close, 1)))
-    ) * rank((open - delay(low, 1)))
+    return ((-1 * rank((open - delay(high, 1)))) * rank((open - delay(close, 1)))) * rank((open - delay(low, 1)))
 
 
 def alpha_21(close, volume, adv20):
@@ -142,9 +106,7 @@ def alpha_21(close, volume, adv20):
         else (
             1
             if ((sum(close, 2) / 2) < ((sum(close, 8) / 8) - stddev(close, 8)))
-            else (
-                1 if ((1 < (volume / adv20)) or ((volume / adv20) == 1)) else (-1 * 1)
-            )
+            else (1 if ((1 < (volume / adv20)) or ((volume / adv20) == 1)) else (-1 * 1))
         )
     )
 
@@ -177,11 +139,7 @@ def alpha_26(high, volume):
 
 
 def alpha_27(volume, vwap):
-    return (
-        (-1 * 1)
-        if (0.5 < rank((sum(correlation(rank(volume), rank(vwap), 6), 2) / 2.0)))
-        else 1
-    )
+    return (-1 * 1) if (0.5 < rank((sum(correlation(rank(volume), rank(vwap), 6), 2) / 2.0))) else 1
 
 
 def alpha_28(low, high, close, adv20):
@@ -196,9 +154,7 @@ def alpha_29(close, returns):
                     scale(
                         log(
                             sum(
-                                ts_min(
-                                    rank(rank((-1 * rank(delta((close - 1), 5))))), 2
-                                ),
+                                ts_min(rank(rank((-1 * rank(delta((close - 1), 5))))), 2),
                                 1,
                             )
                         )
@@ -217,10 +173,7 @@ def alpha_30(close, volume):
             1.0
             - rank(
                 (
-                    (
-                        sign((close - delay(close, 1)))
-                        + sign((delay(close, 1) - delay(close, 2)))
-                    )
+                    (sign((close - delay(close, 1))) + sign((delay(close, 1) - delay(close, 2))))
                     + sign((delay(close, 2) - delay(close, 3)))
                 )
             )
@@ -230,16 +183,13 @@ def alpha_30(close, volume):
 
 
 def alpha_31(low, close, adv20):
-    return (
-        rank(rank(rank(decay_linear((-1 * rank(rank(delta(close, 10)))), 10))))
-        + rank((-1 * delta(close, 3)))
-    ) + sign(scale(correlation(adv20, low, 12)))
+    return (rank(rank(rank(decay_linear((-1 * rank(rank(delta(close, 10)))), 10)))) + rank((-1 * delta(close, 3)))) + sign(
+        scale(correlation(adv20, low, 12))
+    )
 
 
 def alpha_32(close, vwap):
-    return scale(((sum(close, 7) / 7) - close)) + (
-        20 * scale(correlation(vwap, delay(close, 5), 230))
-    )
+    return scale(((sum(close, 7) / 7) - close)) + (20 * scale(correlation(vwap, delay(close, 5), 230)))
 
 
 def alpha_33(open, close):
@@ -247,27 +197,17 @@ def alpha_33(open, close):
 
 
 def alpha_34(close, returns):
-    return rank(
-        (
-            (1 - rank((stddev(returns, 2) / stddev(returns, 5))))
-            + (1 - rank(delta(close, 1)))
-        )
-    )
+    return rank(((1 - rank((stddev(returns, 2) / stddev(returns, 5)))) + (1 - rank(delta(close, 1)))))
 
 
 def alpha_35(low, high, close, volume, returns):
-    return (ts_rank(volume, 32) * (1 - ts_rank(((close + high) - low), 16))) * (
-        1 - ts_rank(returns, 32)
-    )
+    return (ts_rank(volume, 32) * (1 - ts_rank(((close + high) - low), 16))) * (1 - ts_rank(returns, 32))
 
 
 def alpha_36(open, close, volume, vwap, adv20, returns):
     return (
         (
-            (
-                (2.21 * rank(correlation((close - open), delay(volume, 1), 15)))
-                + (0.7 * rank((open - close)))
-            )
+            ((2.21 * rank(correlation((close - open), delay(volume, 1), 15))) + (0.7 * rank((open - close))))
             + (0.73 * rank(ts_rank(delay((-1 * returns), 6), 5)))
         )
         + rank(abs(correlation(vwap, adv20, 6)))
@@ -275,9 +215,7 @@ def alpha_36(open, close, volume, vwap, adv20, returns):
 
 
 def alpha_37(open, close):
-    return rank(correlation(delay((open - close), 1), close, 200)) + rank(
-        (open - close)
-    )
+    return rank(correlation(delay((open - close), 1), close, 200)) + rank((open - close))
 
 
 def alpha_38(open, close):
@@ -285,9 +223,7 @@ def alpha_38(open, close):
 
 
 def alpha_39(close, volume, adv20, returns):
-    return (
-        -1 * rank((delta(close, 7) * (1 - rank(decay_linear((volume / adv20), 9)))))
-    ) * (1 + rank(sum(returns, 250)))
+    return (-1 * rank((delta(close, 7) * (1 - rank(decay_linear((volume / adv20), 9)))))) * (1 + rank(sum(returns, 250)))
 
 
 def alpha_40(high, volume):
@@ -320,43 +256,24 @@ def alpha_45(close, volume):
 def alpha_46(close):
     return (
         (-1 * 1)
-        if (
-            0.25
-            < (
-                ((delay(close, 20) - delay(close, 10)) / 10)
-                - ((delay(close, 10) - close) / 10)
-            )
-        )
+        if (0.25 < (((delay(close, 20) - delay(close, 10)) / 10) - ((delay(close, 10) - close) / 10)))
         else (
             1
-            if (
-                (
-                    ((delay(close, 20) - delay(close, 10)) / 10)
-                    - ((delay(close, 10) - close) / 10)
-                )
-                < 0
-            )
+            if ((((delay(close, 20) - delay(close, 10)) / 10) - ((delay(close, 10) - close) / 10)) < 0)
             else ((-1 * 1) * (close - delay(close, 1)))
         )
     )
 
 
 def alpha_47(high, close, volume, vwap, adv20):
-    return (
-        ((rank((1 / close)) * volume) / adv20)
-        * ((high * rank((high - close))) / (sum(high, 5) / 5))
-    ) - rank((vwap - delay(vwap, 5)))
+    return (((rank((1 / close)) * volume) / adv20) * ((high * rank((high - close))) / (sum(high, 5) / 5))) - rank(
+        (vwap - delay(vwap, 5))
+    )
 
 
 def alpha_48(close, indclass):
     return indneutralize(
-        (
-            (
-                correlation(delta(close, 1), delta(delay(close, 1), 1), 250)
-                * delta(close, 1)
-            )
-            / close
-        ),
+        ((correlation(delta(close, 1), delta(delay(close, 1), 1), 250) * delta(close, 1)) / close),
         indclass.subindustry,
     ) / sum(((delta(close, 1) / delay(close, 1)) ^ 2), 250)
 
@@ -364,13 +281,7 @@ def alpha_48(close, indclass):
 def alpha_49(close):
     return (
         1
-        if (
-            (
-                ((delay(close, 20) - delay(close, 10)) / 10)
-                - ((delay(close, 10) - close) / 10)
-            )
-            < (-1 * 0.1)
-        )
+        if ((((delay(close, 20) - delay(close, 10)) / 10) - ((delay(close, 10) - close) / 10)) < (-1 * 0.1))
         else ((-1 * 1) * (close - delay(close, 1)))
     )
 
@@ -382,22 +293,15 @@ def alpha_50(volume, vwap):
 def alpha_51(close):
     return (
         1
-        if (
-            (
-                ((delay(close, 20) - delay(close, 10)) / 10)
-                - ((delay(close, 10) - close) / 10)
-            )
-            < (-1 * 0.05)
-        )
+        if ((((delay(close, 20) - delay(close, 10)) / 10) - ((delay(close, 10) - close) / 10)) < (-1 * 0.05))
         else ((-1 * 1) * (close - delay(close, 1)))
     )
 
 
 def alpha_52(low, volume, returns):
-    return (
-        ((-1 * ts_min(low, 5)) + delay(ts_min(low, 5), 5))
-        * rank(((sum(returns, 240) - sum(returns, 20)) / 220))
-    ) * ts_rank(volume, 5)
+    return (((-1 * ts_min(low, 5)) + delay(ts_min(low, 5), 5)) * rank(((sum(returns, 240) - sum(returns, 20)) / 220))) * ts_rank(
+        volume, 5
+    )
 
 
 def alpha_53(low, high, close):
@@ -417,9 +321,7 @@ def alpha_55(low, high, close, volume):
 
 
 def alpha_56(cap, returns):
-    return 0 - (
-        1 * (rank((sum(returns, 10) / sum(sum(returns, 2), 3))) * rank((returns * cap)))
-    )
+    return 0 - (1 * (rank((sum(returns, 10) / sum(sum(returns, 2), 3))) * rank((returns * cap))))
 
 
 def alpha_57(close, vwap):
@@ -428,9 +330,7 @@ def alpha_57(close, vwap):
 
 def alpha_58(volume, vwap, indclass):
     return -1 * ts_rank(
-        decay_linear(
-            correlation(indneutralize(vwap, indclass.sector), volume, 3.92795), 7.89291
-        ),
+        decay_linear(correlation(indneutralize(vwap, indclass.sector), volume, 3.92795), 7.89291),
         5.50322,
     )
 
@@ -439,9 +339,7 @@ def alpha_59(volume, vwap, indclass):
     return -1 * ts_rank(
         decay_linear(
             correlation(
-                indneutralize(
-                    ((vwap * 0.728317) + (vwap * (1 - 0.728317))), indclass.industry
-                ),
+                indneutralize(((vwap * 0.728317) + (vwap * (1 - 0.728317))), indclass.industry),
                 volume,
                 4.25197,
             ),
@@ -453,23 +351,12 @@ def alpha_59(volume, vwap, indclass):
 
 def alpha_60(low, high, close, volume):
     return 0 - (
-        1
-        * (
-            (
-                2
-                * scale(
-                    rank(((((close - low) - (high - close)) / (high - low)) * volume))
-                )
-            )
-            - scale(rank(ts_argmax(close, 10)))
-        )
+        1 * ((2 * scale(rank(((((close - low) - (high - close)) / (high - low)) * volume)))) - scale(rank(ts_argmax(close, 10))))
     )
 
 
 def alpha_61(vwap, adv180):
-    return rank((vwap - ts_min(vwap, 16.1219))) < rank(
-        correlation(vwap, adv180, 17.9282)
-    )
+    return rank((vwap - ts_min(vwap, 16.1219))) < rank(correlation(vwap, adv180, 17.9282))
 
 
 def alpha_62(open, low, high, vwap, adv20):
@@ -481,11 +368,7 @@ def alpha_62(open, low, high, vwap, adv20):
 
 def alpha_63(open, close, vwap, indclass, adv180):
     return (
-        rank(
-            decay_linear(
-                delta(indneutralize(close, indclass.industry), 2.25164), 8.22237
-            )
-        )
+        rank(decay_linear(delta(indneutralize(close, indclass.industry), 2.25164), 8.22237))
         - rank(
             decay_linear(
                 correlation(
@@ -508,9 +391,7 @@ def alpha_64(open, low, high, vwap, adv120):
                 16.6208,
             )
         )
-        < rank(
-            delta(((((high + low) / 2) * 0.178404) + (vwap * (1 - 0.178404))), 3.69741)
-        )
+        < rank(delta(((((high + low) / 2) * 0.178404) + (vwap * (1 - 0.178404))), 3.69741))
     ) * -1
 
 
@@ -532,10 +413,7 @@ def alpha_66(open, low, high, vwap):
         rank(decay_linear(delta(vwap, 3.51013), 7.23052))
         + ts_rank(
             decay_linear(
-                (
-                    (((low * 0.96633) + (low * (1 - 0.96633))) - vwap)
-                    / (open - ((high + low) / 2))
-                ),
+                ((((low * 0.96633) + (low * (1 - 0.96633))) - vwap) / (open - ((high + low) / 2))),
                 11.4157,
             ),
             6.72611,
@@ -592,16 +470,12 @@ def alpha_71(open, low, close, vwap, adv180):
             ),
             15.6948,
         ),
-        ts_rank(
-            decay_linear((rank(((low + open) - (vwap + vwap))) ^ 2), 16.4662), 4.4388
-        ),
+        ts_rank(decay_linear((rank(((low + open) - (vwap + vwap))) ^ 2), 16.4662), 4.4388),
     )
 
 
 def alpha_72(low, high, volume, vwap, adv40):
-    return rank(
-        decay_linear(correlation(((high + low) / 2), adv40, 8.93345), 10.1519)
-    ) / rank(
+    return rank(decay_linear(correlation(((high + low) / 2), adv40, 8.93345), 10.1519)) / rank(
         decay_linear(
             correlation(ts_rank(vwap, 3.72469), ts_rank(volume, 18.5188), 6.86671),
             2.95011,
@@ -645,9 +519,7 @@ def alpha_74(high, close, volume, vwap, adv30):
 
 
 def alpha_75(low, volume, vwap, adv50):
-    return rank(correlation(vwap, volume, 4.24304)) < rank(
-        correlation(rank(low), rank(adv50), 12.4413)
-    )
+    return rank(correlation(vwap, volume, 4.24304)) < rank(correlation(rank(low), rank(adv50), 12.4413))
 
 
 def alpha_76(low, vwap, indclass, adv81):
@@ -657,9 +529,7 @@ def alpha_76(low, vwap, indclass, adv81):
             ts_rank(
                 decay_linear(
                     ts_rank(
-                        correlation(
-                            indneutralize(low, indclass.sector), adv81, 8.14941
-                        ),
+                        correlation(indneutralize(low, indclass.sector), adv81, 8.14941),
                         19.569,
                     ),
                     17.1543,
@@ -691,9 +561,7 @@ def alpha_78(low, volume, vwap, adv40):
 def alpha_79(open, close, vwap, indclass, adv150):
     return rank(
         delta(
-            indneutralize(
-                ((close * 0.60733) + (open * (1 - 0.60733))), indclass.sector
-            ),
+            indneutralize(((close * 0.60733) + (open * (1 - 0.60733))), indclass.sector),
             1.23438,
         )
     ) < rank(correlation(ts_rank(vwap, 3.60973), ts_rank(adv150, 9.18637), 14.6644))
@@ -704,9 +572,7 @@ def alpha_80(open, high, indclass, adv10):
         rank(
             sign(
                 delta(
-                    indneutralize(
-                        ((open * 0.868128) + (high * (1 - 0.868128))), indclass.industry
-                    ),
+                    indneutralize(((open * 0.868128) + (high * (1 - 0.868128))), indclass.industry),
                     4.04545,
                 )
             )
@@ -750,32 +616,23 @@ def alpha_82(open, volume, indclass):
 
 
 def alpha_83(low, high, close, volume, vwap):
-    return (
-        rank(delay(((high - low) / (sum(close, 5) / 5)), 2)) * rank(rank(volume))
-    ) / (((high - low) / (sum(close, 5) / 5)) / (vwap - close))
-
-
-def alpha_84(close, vwap):
-    return signedpower(
-        ts_rank((vwap - ts_max(vwap, 15.3217)), 20.7127), delta(close, 4.96796)
+    return (rank(delay(((high - low) / (sum(close, 5) / 5)), 2)) * rank(rank(volume))) / (
+        ((high - low) / (sum(close, 5) / 5)) / (vwap - close)
     )
 
 
+def alpha_84(close, vwap):
+    return signedpower(ts_rank((vwap - ts_max(vwap, 15.3217)), 20.7127), delta(close, 4.96796))
+
+
 def alpha_85(low, high, close, volume, adv30):
-    return rank(
-        correlation(((high * 0.876703) + (close * (1 - 0.876703))), adv30, 9.61331)
-    ) ^ rank(
-        correlation(
-            ts_rank(((high + low) / 2), 3.70596), ts_rank(volume, 10.1595), 7.11408
-        )
+    return rank(correlation(((high * 0.876703) + (close * (1 - 0.876703))), adv30, 9.61331)) ^ rank(
+        correlation(ts_rank(((high + low) / 2), 3.70596), ts_rank(volume, 10.1595), 7.11408)
     )
 
 
 def alpha_86(open, close, vwap, adv20):
-    return (
-        ts_rank(correlation(close, sum(adv20, 14.7444), 6.00049), 20.4195)
-        < rank(((open + close) - (vwap + open)))
-    ) * -1
+    return (ts_rank(correlation(close, sum(adv20, 14.7444), 6.00049), 20.4195) < rank(((open + close) - (vwap + open)))) * -1
 
 
 def alpha_87(close, vwap, indclass, adv81):
@@ -789,11 +646,7 @@ def alpha_87(close, vwap, indclass, adv81):
             ),
             ts_rank(
                 decay_linear(
-                    abs(
-                        correlation(
-                            indneutralize(adv81, indclass.industry), close, 13.4132
-                        )
-                    ),
+                    abs(correlation(indneutralize(adv81, indclass.industry), close, 13.4132)),
                     4.89768,
                 ),
                 14.4535,
@@ -805,11 +658,7 @@ def alpha_87(close, vwap, indclass, adv81):
 
 def alpha_88(open, low, high, close, adv60):
     return min(
-        rank(
-            decay_linear(
-                ((rank(open) + rank(low)) - (rank(high) + rank(close))), 8.06882
-            )
-        ),
+        rank(decay_linear(((rank(open) + rank(low)) - (rank(high) + rank(close))), 8.06882)),
         ts_rank(
             decay_linear(
                 correlation(ts_rank(close, 8.44728), ts_rank(adv60, 20.6966), 8.01266),
@@ -848,9 +697,7 @@ def alpha_91(close, volume, vwap, indclass, adv30):
         ts_rank(
             decay_linear(
                 decay_linear(
-                    correlation(
-                        indneutralize(close, indclass.industry), volume, 9.74928
-                    ),
+                    correlation(indneutralize(close, indclass.industry), volume, 9.74928),
                     16.398,
                 ),
                 3.83219,
@@ -867,23 +714,15 @@ def alpha_92(open, low, high, close, adv30):
             decay_linear(((((high + low) / 2) + close) < (low + open)), 14.7221),
             18.8683,
         ),
-        ts_rank(
-            decay_linear(correlation(rank(low), rank(adv30), 7.58555), 6.94024), 6.80584
-        ),
+        ts_rank(decay_linear(correlation(rank(low), rank(adv30), 7.58555), 6.94024), 6.80584),
     )
 
 
 def alpha_93(close, vwap, indclass, adv81):
     return ts_rank(
-        decay_linear(
-            correlation(indneutralize(vwap, indclass.industry), adv81, 17.4193), 19.848
-        ),
+        decay_linear(correlation(indneutralize(vwap, indclass.industry), adv81, 17.4193), 19.848),
         7.54455,
-    ) / rank(
-        decay_linear(
-            delta(((close * 0.524434) + (vwap * (1 - 0.524434))), 2.77377), 16.2664
-        )
-    )
+    ) / rank(decay_linear(delta(((close * 0.524434) + (vwap * (1 - 0.524434))), 2.77377), 16.2664))
 
 
 def alpha_94(vwap, adv60):
@@ -898,14 +737,7 @@ def alpha_94(vwap, adv60):
 
 def alpha_95(open, low, high, adv40):
     return rank((open - ts_min(open, 12.4105))) < ts_rank(
-        (
-            rank(
-                correlation(
-                    sum(((high + low) / 2), 19.1351), sum(adv40, 19.1351), 12.8742
-                )
-            )
-            ^ 5
-        ),
+        (rank(correlation(sum(((high + low) / 2), 19.1351), sum(adv40, 19.1351), 12.8742)) ^ 5),
         11.7584,
     )
 
@@ -920,9 +752,7 @@ def alpha_96(close, volume, vwap, adv60):
             ts_rank(
                 decay_linear(
                     ts_argmax(
-                        correlation(
-                            ts_rank(close, 7.45404), ts_rank(adv60, 4.13242), 3.65459
-                        ),
+                        correlation(ts_rank(close, 7.45404), ts_rank(adv60, 4.13242), 3.65459),
                         12.6556,
                     ),
                     14.0365,
@@ -939,9 +769,7 @@ def alpha_97(low, vwap, indclass, adv60):
         rank(
             decay_linear(
                 delta(
-                    indneutralize(
-                        ((low * 0.721001) + (vwap * (1 - 0.721001))), indclass.industry
-                    ),
+                    indneutralize(((low * 0.721001) + (vwap * (1 - 0.721001))), indclass.industry),
                     3.3705,
                 ),
                 20.4523,
@@ -961,9 +789,7 @@ def alpha_97(low, vwap, indclass, adv60):
 
 
 def alpha_98(open, vwap, adv5, adv15):
-    return rank(
-        decay_linear(correlation(vwap, sum(adv5, 26.4719), 4.58418), 7.18088)
-    ) - rank(
+    return rank(decay_linear(correlation(vwap, sum(adv5, 26.4719), 4.58418), 7.18088)) - rank(
         decay_linear(
             ts_rank(
                 ts_argmin(correlation(rank(open), rank(adv15), 20.8187), 8.62571),
@@ -976,8 +802,7 @@ def alpha_98(open, vwap, adv5, adv15):
 
 def alpha_99(low, high, volume, adv60):
     return (
-        rank(correlation(sum(((high + low) / 2), 19.8975), sum(adv60, 19.8975), 8.8136))
-        < rank(correlation(low, volume, 6.28259))
+        rank(correlation(sum(((high + low) / 2), 19.8975), sum(adv60, 19.8975), 8.8136)) < rank(correlation(low, volume, 6.28259))
     ) * -1
 
 
@@ -991,15 +816,7 @@ def alpha_100(low, high, close, volume, indclass, adv20):
                     * scale(
                         indneutralize(
                             indneutralize(
-                                rank(
-                                    (
-                                        (
-                                            ((close - low) - (high - close))
-                                            / (high - low)
-                                        )
-                                        * volume
-                                    )
-                                ),
+                                rank(((((close - low) - (high - close)) / (high - low)) * volume)),
                                 indclass.subindustry,
                             ),
                             indclass.subindustry,
@@ -1008,10 +825,7 @@ def alpha_100(low, high, close, volume, indclass, adv20):
                 )
                 - scale(
                     indneutralize(
-                        (
-                            correlation(close, rank(adv20), 5)
-                            - rank(ts_argmin(close, 30))
-                        ),
+                        (correlation(close, rank(adv20), 5) - rank(ts_argmin(close, 30))),
                         indclass.subindustry,
                     )
                 )
