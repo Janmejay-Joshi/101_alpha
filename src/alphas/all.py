@@ -7,6 +7,9 @@ from src.utils.operators import *
 #
 # Due To IndClass : ( 18 Functions )
 # 48, 58, 59, 63, 67, 69, 70, 76, 79, 80, 82, 87, 89, 90, 91, 93, 97, 100
+#
+# Due To Market Cap : ( 1 Function )
+# 56
 
 
 def alpha_1(close, returns):

@@ -18,4 +18,29 @@ def runner(include=[], exclude=[]):
 
 
 if __name__ == "__main__":
-    runner()
+    # Excluded Due to missing Inputs:
+    #   Market Cap, IndClass
+    excludes = [
+        48,
+        56,
+        58,
+        59,
+        63,
+        67,
+        69,
+        70,
+        76,
+        79,
+        80,
+        82,
+        87,
+        89,
+        90,
+        91,
+        93,
+        97,
+        100,
+    ]
+    excluded_alphas = [f"alpha_{i}" for i in excludes]
+
+    runner(exclude=excluded_alphas)
