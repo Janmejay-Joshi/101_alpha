@@ -3,30 +3,24 @@ from src.utils.preprocess import preprocess_candles
 
 from multiprocessing import Pool
 import pandas as pd
+import os
 
 
 day_candles = pd.DataFrame
 
 
-def load_candles():
+def load_candles(load_from_cache=False):
+    if load_from_cache and os.path.exists("./cache/processed_candles.csv"):
+        return pd.read_csv("./cache/processed_candles.csv")
+
     global day_candles
 
     market = Market()
-    day_candles = market.data_by_path(interval="day", symbols=market.symbols("NIFTY 500"), path=market.nse_equity_path)
-
-    procesed_day_candles = pd.DataFrame(
-        columns=[
-            "date",
-            "open",
-            "high",
-            "low",
-            "close",
-            "volume",
-            "symbol",
-            "vwap",
-            "returns",
-        ]
+    day_candles = market.data_by_path(
+        interval="day", symbols=market.symbols("NIFTY 500"), path=market.nse_equity_path
     )
+
+    procesed_day_candles = pd.DataFrame()
 
     unique_symbols = day_candles.symbol.unique()
 
@@ -39,6 +33,11 @@ def load_candles():
         axis=0,
     )
 
+    if not os.path.exists("./cache"):
+        os.makedirs("./cache")
+
+    procesed_day_candles.to_csv("./cache/processed_candles.csv")
+
     return procesed_day_candles
 
 
@@ -47,7 +46,6 @@ def worker(symbol):
 
     symbol_day_candles = day_candles[day_candles.symbol == symbol].copy(deep=False)
     processed_df = preprocess_candles(symbol_day_candles)
-    processed_df.iloc[0, -1] = 0
 
     return processed_df
 

@@ -44,7 +44,7 @@ def vwap(day_candles: pd.DataFrame):
     )
 
 
-def avd(day_candles: pd.DataFrame, window: int):
+def adv(day_candles: pd.DataFrame, window: int):
     """
     Average daily dollar volume for the past d days, i.e. ADTV
     """
@@ -55,8 +55,9 @@ def preprocess_candles(day_candles: pd.DataFrame):
     day_candles.loc[:, "vwap"] = vwap(day_candles)
 
     for d in [5, 10, 15, 20, 30, 40, 50, 60, 81, 120, 150, 180]:
-        day_candles.loc[:, f"avd{d}"] = avd(day_candles, d)
+        day_candles.loc[:, f"adv{d}"] = adv(day_candles, d)
 
     day_candles.loc[:, "returns"] = returns(day_candles)
+    day_candles.iloc[0, -1] = 0
 
     return day_candles

@@ -13,9 +13,10 @@ def rank(x):
     pass
 
 
-def delay(x, d):
+def delay(x: pd.DataFrame, d):
     """Value of x, d Days ago"""
-    pass
+    d = math.floor(d)
+    return x.shift(periods=d)
 
 
 def correlation(x, y, d):
@@ -50,14 +51,16 @@ def indneutralize(x, g):
     pass
 
 
-def ts_min(x, d):
+def ts_min(x: pd.DataFrame, d):
     """Time-series min over the Past d days"""
-    pass
+    d = math.floor(d)
+    return x.rolling(window=d).min()
 
 
-def ts_max(x, d):
+def ts_max(x: pd.DataFrame, d):
     """Time-series max over the Past d days"""
-    pass
+    d = math.floor(d)
+    return x.rolling(window=d).max()
 
 
 def ts_argmax(x, d):
@@ -75,19 +78,22 @@ def ts_rank(x, d):
     pass
 
 
-def sum(x, d):
+def sum(x: pd.DataFrame, d):
     """Time-series sum over the Past d days"""
-    pass
+    d = math.floor(d)
+    return x.rolling(window=d).sum()
 
 
-def product(x, d):
+def product(x: pd.DataFrame, d):
     """Time-series product over the Past d days"""
-    pass
+    d = math.floor(d)
+    return x.rolling(window=d).apply(np.prod, raw=True)
 
 
-def stddev(x, d):
+def stddev(x: pd.DataFrame, d):
     """Moving Time-series standard deviation over the Past d days"""
-    pass
+    d = math.floor(d)
+    return x.rolling(window=d).std()
 
 
 ## Alias Functions
