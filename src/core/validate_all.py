@@ -12,6 +12,8 @@ def runner(include=[], exclude=[]):
 
     day_candles = load_candles(load_from_cache=True)
 
+    counter = 0
+
     for i in dir(all_alphas):
         if i.startswith("alpha") and (i not in exclude):
             if (include != []) and (i not in include):
@@ -19,8 +21,13 @@ def runner(include=[], exclude=[]):
 
             alpha = getattr(all_alphas, i)
             if callable(alpha):
-                print(alpha, inspect.signature(alpha))
-                print(alpha_runner(alpha=alpha, day_candles=day_candles))
+                try:
+                    alpha_runner(alpha=alpha, day_candles=day_candles)
+                except Exception as e:
+                    print(alpha, inspect.signature(alpha), e)
+                finally:
+                    counter += 1
+                    print(f"{counter}/101  ({(counter / 101 * 100):0,.2f}%)", end="\r")
 
 
 if __name__ == "__main__":
@@ -52,4 +59,4 @@ if __name__ == "__main__":
     excluded_alphas = [f"alpha_{i}" for i in excludes]
     included_alphas = [f"alpha_{i}" for i in includes]
 
-    runner(include=included_alphas, exclude=excluded_alphas)
+    runner(exclude=excluded_alphas)

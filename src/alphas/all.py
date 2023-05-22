@@ -16,7 +16,15 @@ from src.utils.operators import *
 
 
 def alpha_1(close, returns, **kwargs):
-    return rank(ts_argmax(signedpower((stddev(returns, 20) if (returns < 0) else close), 2.0), 5)) - 0.5
+    return (
+        rank(
+            ts_argmax(
+                signedpower(pd.Series(np.where((returns < 0), stddev(returns, 20), close)), 2.0),
+                5,
+            )
+        )
+        - 0.5
+    )
 
 
 def alpha_2(open, close, volume, **kwargs):
@@ -40,7 +48,13 @@ def alpha_6(open, volume, **kwargs):
 
 
 def alpha_7(close, volume, adv20, **kwargs):
-    return ((-1 * ts_rank(abs(delta(close, 7)), 60)) * sign(delta(close, 7))) if (adv20 < volume) else (-1 * 1)
+    return pd.Series(
+        np.where(
+            (adv20 < volume),
+            ((-1 * ts_rank(abs(delta(close, 7)), 60)) * sign(delta(close, 7))),
+            (-1 * 1),
+        )
+    )
 
 
 def alpha_8(open, returns, **kwargs):
@@ -48,19 +62,31 @@ def alpha_8(open, returns, **kwargs):
 
 
 def alpha_9(close, **kwargs):
-    return (
-        delta(close, 1)
-        if (0 < ts_min(delta(close, 1), 5))
-        else (delta(close, 1) if (ts_max(delta(close, 1), 5) < 0) else (-1 * delta(close, 1)))
+    return pd.Series(
+        np.where(
+            (0 < ts_min(delta(close, 1), 5)),
+            delta(close, 1),
+            np.where(
+                (ts_max(delta(close, 1), 5) < 0),
+                delta(close, 1),
+                (-1 * delta(close, 1)),
+            ),
+        )
     )
 
 
 def alpha_10(close, **kwargs):
     return rank(
-        (
-            delta(close, 1)
-            if (0 < ts_min(delta(close, 1), 4))
-            else (delta(close, 1) if (ts_max(delta(close, 1), 4) < 0) else (-1 * delta(close, 1)))
+        pd.Series(
+            np.where(
+                (0 < ts_min(delta(close, 1), 4)),
+                delta(close, 1),
+                np.where(
+                    (ts_max(delta(close, 1), 4) < 0),
+                    delta(close, 1),
+                    (-1 * delta(close, 1)),
+                ),
+            )
         )
     )
 
@@ -106,13 +132,15 @@ def alpha_20(open, low, high, close, **kwargs):
 
 
 def alpha_21(close, volume, adv20, **kwargs):
-    return (
-        (-1 * 1)
-        if (((sum(close, 8) / 8) + stddev(close, 8)) < (sum(close, 2) / 2))
-        else (
-            1
-            if ((sum(close, 2) / 2) < ((sum(close, 8) / 8) - stddev(close, 8)))
-            else (1 if ((1 < (volume / adv20)) or ((volume / adv20) == 1)) else (-1 * 1))
+    return pd.Series(
+        np.where(
+            (((sum(close, 8) / 8) + stddev(close, 8)) < (sum(close, 2) / 2)),
+            (-1 * 1),
+            np.where(
+                ((sum(close, 2) / 2) < ((sum(close, 8) / 8) - stddev(close, 8))),
+                1,
+                (1 if ((1 < (volume / adv20)) or ((volume / adv20) == 1)) else (-1 * 1)),
+            ),
         )
     )
 
@@ -122,17 +150,16 @@ def alpha_22(high, close, volume, **kwargs):
 
 
 def alpha_23(high, **kwargs):
-    return (-1 * delta(high, 2)) if ((sum(high, 20) / 20) < high) else 0
+    return pd.Series(np.where(((sum(high, 20) / 20) < high), (-1 * delta(high, 2)), 0))
 
 
 def alpha_24(close, **kwargs):
-    return (
-        (-1 * (close - ts_min(close, 100)))
-        if (
-            ((delta((sum(close, 100) / 100), 100) / delay(close, 100)) < 0.05)
-            or ((delta((sum(close, 100) / 100), 100) / delay(close, 100)) == 0.05)
+    return pd.Series(
+        np.where(
+            ((delta((sum(close, 100) / 100), 100) / delay(close, 100)) <= 0.05),
+            (-1 * (close - ts_min(close, 100))),
+            (-1 * delta(close, 3)),
         )
-        else (-1 * delta(close, 3))
     )
 
 
@@ -145,7 +172,13 @@ def alpha_26(high, volume, **kwargs):
 
 
 def alpha_27(volume, vwap, **kwargs):
-    return (-1 * 1) if (0.5 < rank((sum(correlation(rank(volume), rank(vwap), 6), 2) / 2.0))) else 1
+    return pd.Series(
+        np.where(
+            (0.5 < rank((sum(correlation(rank(volume), rank(vwap), 6), 2) / 2.0))),
+            (-1 * 1),
+            1,
+        )
+    )
 
 
 def alpha_28(low, high, close, adv20, **kwargs):
@@ -260,13 +293,15 @@ def alpha_45(close, volume, **kwargs):
 
 
 def alpha_46(close, **kwargs):
-    return (
-        (-1 * 1)
-        if (0.25 < (((delay(close, 20) - delay(close, 10)) / 10) - ((delay(close, 10) - close) / 10)))
-        else (
-            1
-            if ((((delay(close, 20) - delay(close, 10)) / 10) - ((delay(close, 10) - close) / 10)) < 0)
-            else ((-1 * 1) * (close - delay(close, 1)))
+    return pd.Series(
+        np.where(
+            (0.25 < (((delay(close, 20) - delay(close, 10)) / 10) - ((delay(close, 10) - close) / 10))),
+            (-1 * 1),
+            np.where(
+                ((((delay(close, 20) - delay(close, 10)) / 10) - ((delay(close, 10) - close) / 10)) < 0),
+                1,
+                ((-1 * 1) * (close - delay(close, 1))),
+            ),
         )
     )
 
@@ -285,10 +320,12 @@ def alpha_48(close, indclass, **kwargs):
 
 
 def alpha_49(close, **kwargs):
-    return (
-        1
-        if ((((delay(close, 20) - delay(close, 10)) / 10) - ((delay(close, 10) - close) / 10)) < (-1 * 0.1))
-        else ((-1 * 1) * (close - delay(close, 1)))
+    return pd.Series(
+        np.where(
+            ((((delay(close, 20) - delay(close, 10)) / 10) - ((delay(close, 10) - close) / 10)) < (-1 * 0.1)),
+            1,
+            ((-1 * 1) * (close - delay(close, 1))),
+        )
     )
 
 
@@ -297,10 +334,12 @@ def alpha_50(volume, vwap, **kwargs):
 
 
 def alpha_51(close, **kwargs):
-    return (
-        1
-        if ((((delay(close, 20) - delay(close, 10)) / 10) - ((delay(close, 10) - close) / 10)) < (-1 * 0.05))
-        else ((-1 * 1) * (close - delay(close, 1)))
+    return pd.Series(
+        np.where(
+            ((((delay(close, 20) - delay(close, 10)) / 10) - ((delay(close, 10) - close) / 10)) < (-1 * 0.05)),
+            1,
+            ((-1 * 1) * (close - delay(close, 1))),
+        )
     )
 
 

@@ -3,6 +3,9 @@ import typing
 
 
 def alpha_runner(alpha: typing.Callable, day_candles: pd.DataFrame):
+    """
+    Passes Required Parameters to the alpha function
+    """
     return alpha(
         open=day_candles.open,
         low=day_candles.low,
