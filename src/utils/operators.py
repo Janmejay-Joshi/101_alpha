@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import math
 
-# import ta
+import ta
 
 # NOTE:
 #  1. x, y -> TimeSeries Data
@@ -48,8 +48,7 @@ def decay_linear(x, d):
     """Weighted moving average over the Past d days
     with linearly decaying weights d, d - 1, …, 1 (rescaled to sum up to 1)"""
     d = math.floor(d)
-    # return ta.trend.wma_indicator(x, window=d)
-    pass
+    # return ta.trend.WMAIndicator(x, window=d).wma()
 
 
 def indneutralize(x, g):
@@ -110,8 +109,8 @@ def stddev(x: pd.DataFrame, d):
 
 
 def log(x):
-    """Alias for math.log(x)"""
-    return math.log(x)
+    """Alias for np.log(x)"""
+    return np.log(x)
 
 
 def sign(x):
@@ -120,8 +119,8 @@ def sign(x):
 
 
 def signedpower(x, a):
-    """Alias for math.pow(x, a)"""
-    return math.pow(x, a)
+    """Alias for np.power(x, a)"""
+    return np.power(x, a)
 
 
 def min(x, d):

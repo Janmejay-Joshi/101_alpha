@@ -2,17 +2,17 @@ from src.utils.operators import *
 
 # TODO: Recheck Following Functions:
 #
-# Due To Ternary Operator: ( 11 Functions )
-# 1, 7, 9, 10, 21, 23, 24, 27, 46, 49, 51
+# [✔] Due To Ternary Operator: ( 11 Functions )
+#      1, 7, 9, 10, 21, 23, 24, 27, 46, 49, 51
 #
-# Due To IndClass : ( 18 Functions )
-# 48, 58, 59, 63, 67, 69, 70, 76, 79, 80, 82, 87, 89, 90, 91, 93, 97, 100
+# [ ] Due To IndClass : ( 18 Functions )
+#      48, 58, 59, 63, 67, 69, 70, 76, 79, 80, 82, 87, 89, 90, 91, 93, 97, 100
 #
-# Due To Market Cap : ( 1 Function )
-# 56
+# [ ] Due To Market Cap : ( 1 Function )
+#      56
 #
-# Verify Use of ^ : ( 13 Functions )
-# 33, 41, 48 ,54, 67, 69, 70, 78, 80, 85, 90, 94, 95
+# [✔] Verify Use of ^ : ( 13 Functions )
+#      33, 41, 48 ,54, 67, 69, 70, 78, 80,81, 85, 90, 94, 95
 
 
 def alpha_1(close, returns, **kwargs):
@@ -139,7 +139,7 @@ def alpha_21(close, volume, adv20, **kwargs):
             np.where(
                 ((sum(close, 2) / 2) < ((sum(close, 8) / 8) - stddev(close, 8))),
                 1,
-                (1 if ((1 < (volume / adv20)) or ((volume / adv20) == 1)) else (-1 * 1)),
+                np.where(((1 <= (volume / adv20))), 1, (-1 * 1)),
             ),
         )
     )
@@ -232,7 +232,7 @@ def alpha_32(close, vwap, **kwargs):
 
 
 def alpha_33(open, close, **kwargs):
-    return rank((-1 * ((1 - (open / close)) ^ 1)))
+    return rank((-1 * np.logical_xor((1 - (open / close)), 1)))
 
 
 def alpha_34(close, returns, **kwargs):
@@ -270,7 +270,7 @@ def alpha_40(high, volume, **kwargs):
 
 
 def alpha_41(low, high, vwap, **kwargs):
-    return ((high * low) ^ 0.5) - vwap
+    return np.logical_xor((high * low), 0.5) - vwap
 
 
 def alpha_42(close, vwap, **kwargs):
@@ -316,7 +316,7 @@ def alpha_48(close, indclass, **kwargs):
     return indneutralize(
         ((correlation(delta(close, 1), delta(delay(close, 1), 1), 250) * delta(close, 1)) / close),
         indclass.subindustry,
-    ) / sum(((delta(close, 1) / delay(close, 1)) ^ 2), 250)
+    ) / sum(np.logical_xor((delta(close, 1) / delay(close, 1)), 2), 250)
 
 
 def alpha_49(close, **kwargs):
@@ -354,7 +354,7 @@ def alpha_53(low, high, close, **kwargs):
 
 
 def alpha_54(open, low, high, close, **kwargs):
-    return (-1 * ((low - close) * (open ^ 5))) / ((low - high) * (close ^ 5))
+    return (-1 * ((low - close) * np.logical_xor(open, 5))) / ((low - high) * np.logical_xor(close, 5))
 
 
 def alpha_55(low, high, close, volume, **kwargs):
@@ -468,15 +468,18 @@ def alpha_66(open, low, high, vwap, **kwargs):
 
 def alpha_67(high, vwap, indclass, adv20, **kwargs):
     return (
-        rank((high - ts_min(high, 2.14593)))
-        ^ rank(
-            correlation(
-                indneutralize(vwap, indclass.sector),
-                indneutralize(adv20, indclass.subindustry),
-                6.02936,
-            )
+        np.logical_xor(
+            rank((high - ts_min(high, 2.14593))),
+            rank(
+                correlation(
+                    indneutralize(vwap, indclass.sector),
+                    indneutralize(adv20, indclass.subindustry),
+                    6.02936,
+                )
+            ),
         )
-    ) * -1
+        * -1
+    )
 
 
 def alpha_68(low, high, close, adv15, **kwargs):
@@ -488,22 +491,28 @@ def alpha_68(low, high, close, adv15, **kwargs):
 
 def alpha_69(close, vwap, indclass, adv20, **kwargs):
     return (
-        rank(ts_max(delta(indneutralize(vwap, indclass.industry), 2.72412), 4.79344))
-        ^ ts_rank(
-            correlation(((close * 0.490655) + (vwap * (1 - 0.490655))), adv20, 4.92416),
-            9.0615,
+        np.logical_xor(
+            rank(ts_max(delta(indneutralize(vwap, indclass.industry), 2.72412), 4.79344)),
+            ts_rank(
+                correlation(((close * 0.490655) + (vwap * (1 - 0.490655))), adv20, 4.92416),
+                9.0615,
+            ),
         )
-    ) * -1
+        * -1
+    )
 
 
 def alpha_70(close, vwap, indclass, adv50, **kwargs):
     return (
-        rank(delta(vwap, 1.29456))
-        ^ ts_rank(
-            correlation(indneutralize(close, indclass.industry), adv50, 17.8256),
-            17.9171,
+        np.logical_xor(
+            rank(delta(vwap, 1.29456)),
+            ts_rank(
+                correlation(indneutralize(close, indclass.industry), adv50, 17.8256),
+                17.9171,
+            ),
         )
-    ) * -1
+        * -1
+    )
 
 
 def alpha_71(open, low, close, vwap, adv180, **kwargs):
@@ -594,13 +603,16 @@ def alpha_77(low, high, vwap, adv40, **kwargs):
 
 
 def alpha_78(low, volume, vwap, adv40, **kwargs):
-    return rank(
-        correlation(
-            sum(((low * 0.352233) + (vwap * (1 - 0.352233))), 19.7428),
-            sum(adv40, 19.7428),
-            6.83313,
-        )
-    ) ^ rank(correlation(rank(vwap), rank(volume), 5.77492))
+    return np.logical_xor(
+        rank(
+            correlation(
+                sum(((low * 0.352233) + (vwap * (1 - 0.352233))), 19.7428),
+                sum(adv40, 19.7428),
+                6.83313,
+            )
+        ),
+        rank(correlation(rank(vwap), rank(volume), 5.77492)),
+    )
 
 
 def alpha_79(open, close, vwap, indclass, adv150, **kwargs):
@@ -614,16 +626,22 @@ def alpha_79(open, close, vwap, indclass, adv150, **kwargs):
 
 def alpha_80(open, high, indclass, adv10, **kwargs):
     return (
-        rank(
-            sign(
-                delta(
-                    indneutralize(((open * 0.868128) + (high * (1 - 0.868128))), indclass.industry),
-                    4.04545,
+        np.logical_xor(
+            rank(
+                sign(
+                    delta(
+                        indneutralize(
+                            ((open * 0.868128) + (high * (1 - 0.868128))),
+                            indclass.industry,
+                        ),
+                        4.04545,
+                    )
                 )
-            )
+            ),
+            ts_rank(correlation(high, adv10, 5.11456), 5.53756),
         )
-        ^ ts_rank(correlation(high, adv10, 5.11456), 5.53756)
-    ) * -1
+        * -1
+    )
 
 
 def alpha_81(volume, vwap, adv10, **kwargs):
@@ -631,7 +649,7 @@ def alpha_81(volume, vwap, adv10, **kwargs):
         rank(
             log(
                 product(
-                    rank((rank(correlation(vwap, sum(adv10, 49.6054), 8.47743)) ^ 4)),
+                    rank(np.logical_xor(rank(correlation(vwap, sum(adv10, 49.6054), 8.47743)), 4)),
                     14.9655,
                 )
             )
@@ -671,8 +689,9 @@ def alpha_84(close, vwap, **kwargs):
 
 
 def alpha_85(low, high, close, volume, adv30, **kwargs):
-    return rank(correlation(((high * 0.876703) + (close * (1 - 0.876703))), adv30, 9.61331)) ^ rank(
-        correlation(ts_rank(((high + low) / 2), 3.70596), ts_rank(volume, 10.1595), 7.11408)
+    return np.logical_xor(
+        rank(correlation(((high * 0.876703) + (close * (1 - 0.876703))), adv30, 9.61331)),
+        rank(correlation(ts_rank(((high + low) / 2), 3.70596), ts_rank(volume, 10.1595), 7.11408)),
     )
 
 
@@ -729,12 +748,15 @@ def alpha_89(low, vwap, indclass, adv10, **kwargs):
 
 def alpha_90(low, close, indclass, adv40, **kwargs):
     return (
-        rank((close - ts_max(close, 4.66719)))
-        ^ ts_rank(
-            correlation(indneutralize(adv40, indclass.subindustry), low, 5.38375),
-            3.21856,
+        np.logical_xor(
+            rank((close - ts_max(close, 4.66719))),
+            ts_rank(
+                correlation(indneutralize(adv40, indclass.subindustry), low, 5.38375),
+                3.21856,
+            ),
         )
-    ) * -1
+        * -1
+    )
 
 
 def alpha_91(close, volume, vwap, indclass, adv30, **kwargs):
@@ -772,17 +794,23 @@ def alpha_93(close, vwap, indclass, adv81, **kwargs):
 
 def alpha_94(vwap, adv60, **kwargs):
     return (
-        rank((vwap - ts_min(vwap, 11.5783)))
-        ^ ts_rank(
-            correlation(ts_rank(vwap, 19.6462), ts_rank(adv60, 4.02992), 18.0926),
-            2.70756,
+        np.logical_xor(
+            rank((vwap - ts_min(vwap, 11.5783))),
+            ts_rank(
+                correlation(ts_rank(vwap, 19.6462), ts_rank(adv60, 4.02992), 18.0926),
+                2.70756,
+            ),
         )
-    ) * -1
+        * -1
+    )
 
 
 def alpha_95(open, low, high, adv40, **kwargs):
     return rank((open - ts_min(open, 12.4105))) < ts_rank(
-        (rank(correlation(sum(((high + low) / 2), 19.1351), sum(adv40, 19.1351), 12.8742)) ^ 5),
+        np.logical_xor(
+            rank(correlation(sum(((high + low) / 2), 19.1351), sum(adv40, 19.1351), 12.8742)),
+            5,
+        ),
         11.7584,
     )
 
