@@ -1,7 +1,7 @@
 from src.core.dataloader import load_candles
-from src.alphas.runner import alpha_runner
+from src.utils.validate import validate_alpha
 
-import inspect
+from multiprocessing import Pool
 
 
 def runner(include=[], exclude=[]):
@@ -10,9 +10,7 @@ def runner(include=[], exclude=[]):
     """
     import src.alphas.all as all_alphas
 
-    day_candles = load_candles(load_from_cache=True)
-
-    counter = 0
+    runnables = []
 
     for i in dir(all_alphas):
         if i.startswith("alpha") and (i not in exclude):
@@ -21,13 +19,10 @@ def runner(include=[], exclude=[]):
 
             alpha = getattr(all_alphas, i)
             if callable(alpha):
-                try:
-                    alpha_runner(alpha=alpha, day_candles=day_candles)
-                except Exception as e:
-                    print(alpha, inspect.signature(alpha), e)
-                finally:
-                    counter += 1
-                    print(f"{counter}/101  ({(counter / 101 * 100):0,.2f}%)", end="\r")
+                runnables.append(alpha)
+
+    with Pool(8) as p:
+        p.map(validate_alpha, runnables)
 
 
 if __name__ == "__main__":
