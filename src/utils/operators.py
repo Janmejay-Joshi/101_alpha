@@ -49,7 +49,6 @@ def decay_linear(x, d):
     """Weighted moving average over the Past d days
     with linearly decaying weights d, d - 1, …, 1 (rescaled to sum up to 1)"""
     d = math.floor(d)
-
     return ta.trend.wma_indicator(x, d)
 
 
