@@ -34,7 +34,7 @@ def load_candles(load_from_cache=False):
     )
 
     if not os.path.exists("./cache"):
-        os.makedirs("./cache")
+        os.makedirs(os.path.join("./cache", "out"))
 
     procesed_day_candles.to_csv("./cache/processed_candles.csv")
 
