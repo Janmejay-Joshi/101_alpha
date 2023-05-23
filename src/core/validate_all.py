@@ -19,7 +19,7 @@ def runner(include=[], exclude=[]):
             if callable(alpha):
                 runnables.append(alpha)
 
-    with Pool(8) as p:
+    with Pool(12) as p:
         p.map(validate_alpha, runnables)
 
 
@@ -47,13 +47,10 @@ if __name__ == "__main__":
         93,
         97,
         100,
-        1,
-        57,
-        60,
-        96,
-        98,
+       
     ]
     includes = [101, 41]
+    
 
     excluded_alphas = [f"alpha_{i}" for i in excludes]
     included_alphas = [f"alpha_{i}" for i in includes]

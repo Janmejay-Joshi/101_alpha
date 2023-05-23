@@ -24,7 +24,7 @@ def load_candles(load_from_cache=False):
 
     unique_symbols = day_candles.symbol.unique()
 
-    with Pool(8) as p:
+    with Pool(12) as p:
         processed_df = p.map(worker, unique_symbols)
 
     procesed_day_candles = pd.concat(

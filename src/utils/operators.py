@@ -73,13 +73,15 @@ def ts_max(x, d):
 def ts_argmax(x, d):
     """Which day ts_max(x, d) occurred on"""
     d = math.floor(d)
-    pass
+    return x.rolling(d).apply(np.argmax).add(1)
 
 
 def ts_argmin(x, d):
     """Which day ts_min(x, d) occurred on"""
     d = math.floor(d)
-    pass
+    return (x.rolling(d)
+            .apply(np.argmin)
+            .add(1))
 
 
 def ts_rank(x, d):
