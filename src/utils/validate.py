@@ -66,7 +66,7 @@ def validate_alpha(alpha, num_buckets=10):
 
         plt.clf()
         plt.title(alpha_name)
-        plt.bar(t_df[alpha_bucket_name], t_df.next_day_intraday_return)
+        plt.bar(t_df[alpha_bucket_name], -1 * t_df.next_day_intraday_return)
         plt.savefig(f"./cache/out/{alpha_name}.png")
 
     except Exception as e:

@@ -1,6 +1,4 @@
-from src.core.dataloader import load_candles
 from src.utils.validate import validate_alpha
-
 from multiprocessing import Pool
 
 
