@@ -35,7 +35,8 @@ def covariance(x, y, d):
 
 def scale(x, a=1):
     """Rescaled x such that sum(abs(x)) = a (the default is a = 1)"""
-    pass
+    normalizer = a / float(x.sum())
+    return x.apply(lambda val: val * normalizer)
 
 
 def delta(x, d):
@@ -48,7 +49,8 @@ def decay_linear(x, d):
     """Weighted moving average over the Past d days
     with linearly decaying weights d, d - 1, …, 1 (rescaled to sum up to 1)"""
     d = math.floor(d)
-    # return ta.trend.WMAIndicator(x, window=d).wma()
+
+    return ta.trend.wma_indicator(x, d)
 
 
 def indneutralize(x, g):
@@ -123,11 +125,11 @@ def signedpower(x, a):
     return np.power(x, a)
 
 
-def min(x, d):
-    """Alias for ts_min(x, d)"""
-    return ts_min(x, d)
+def min(x, y):
+    """Alias for np.minimum(x, y)"""
+    return np.minimum(x, y)
 
 
-def max(x, d):
-    """Alias for ts_max(x, d)"""
-    return ts_max(x, d)
+def max(x, y):
+    """Alias for np.maximum(x, y)"""
+    return np.maximum(x, y)

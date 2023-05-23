@@ -11,8 +11,14 @@ from src.utils.operators import *
 # [ ] Due To Market Cap : ( 1 Function )
 #      56
 #
-# [✔] Verify Use of ^ : ( 13 Functions )
-#      33, 41, 48 ,54, 67, 69, 70, 78, 80,81, 85, 90, 94, 95
+# [✔] Verify Use of ^ : ( 15 Functions )
+#      33, 41, 48 ,54, 67, 69, 70, 71, 78, 80, 81, 85, 90, 94, 95
+#
+# [ ] Empty Value in : ( 3 Functions )
+#      28, 31, 54
+#
+# [ ] Due to ts_argmax, ts_argmin : ( 2 Functions )
+#      1, 57, 60, 96, 98
 
 
 def alpha_1(close, returns, **kwargs):
@@ -503,7 +509,7 @@ def alpha_69(close, vwap, indclass, adv20, **kwargs):
 
 
 def alpha_70(close, vwap, indclass, adv50, **kwargs):
-    return (
+    return pd.Series(
         np.logical_xor(
             rank(delta(vwap, 1.29456)),
             ts_rank(
@@ -524,7 +530,13 @@ def alpha_71(open, low, close, vwap, adv180, **kwargs):
             ),
             15.6948,
         ),
-        ts_rank(decay_linear((rank(((low + open) - (vwap + vwap))) ^ 2), 16.4662), 4.4388),
+        ts_rank(
+            decay_linear(
+                pd.Series(np.logical_xor(rank(((low + open) - (vwap + vwap))), 2)),
+                16.4662,
+            ),
+            4.4388,
+        ),
     )
 
 
@@ -625,7 +637,7 @@ def alpha_79(open, close, vwap, indclass, adv150, **kwargs):
 
 
 def alpha_80(open, high, indclass, adv10, **kwargs):
-    return (
+    return pd.Series(
         np.logical_xor(
             rank(
                 sign(
@@ -649,7 +661,7 @@ def alpha_81(volume, vwap, adv10, **kwargs):
         rank(
             log(
                 product(
-                    rank(np.logical_xor(rank(correlation(vwap, sum(adv10, 49.6054), 8.47743)), 4)),
+                    rank(pd.Series(np.logical_xor(rank(correlation(vwap, sum(adv10, 49.6054), 8.47743)), 4))),
                     14.9655,
                 )
             )
@@ -689,9 +701,17 @@ def alpha_84(close, vwap, **kwargs):
 
 
 def alpha_85(low, high, close, volume, adv30, **kwargs):
-    return np.logical_xor(
-        rank(correlation(((high * 0.876703) + (close * (1 - 0.876703))), adv30, 9.61331)),
-        rank(correlation(ts_rank(((high + low) / 2), 3.70596), ts_rank(volume, 10.1595), 7.11408)),
+    return pd.Series(
+        np.logical_xor(
+            rank(correlation(((high * 0.876703) + (close * (1 - 0.876703))), adv30, 9.61331)),
+            rank(
+                correlation(
+                    ts_rank(((high + low) / 2), 3.70596),
+                    ts_rank(volume, 10.1595),
+                    7.11408,
+                )
+            ),
+        )
     )
 
 
@@ -747,7 +767,7 @@ def alpha_89(low, vwap, indclass, adv10, **kwargs):
 
 
 def alpha_90(low, close, indclass, adv40, **kwargs):
-    return (
+    return pd.Series(
         np.logical_xor(
             rank((close - ts_max(close, 4.66719))),
             ts_rank(
@@ -793,7 +813,7 @@ def alpha_93(close, vwap, indclass, adv81, **kwargs):
 
 
 def alpha_94(vwap, adv60, **kwargs):
-    return (
+    return pd.Series(
         np.logical_xor(
             rank((vwap - ts_min(vwap, 11.5783))),
             ts_rank(
@@ -807,11 +827,13 @@ def alpha_94(vwap, adv60, **kwargs):
 
 def alpha_95(open, low, high, adv40, **kwargs):
     return rank((open - ts_min(open, 12.4105))) < ts_rank(
-        np.logical_xor(
-            rank(correlation(sum(((high + low) / 2), 19.1351), sum(adv40, 19.1351), 12.8742)),
-            5,
-        ),
-        11.7584,
+        pd.Series(
+            np.logical_xor(
+                rank(correlation(sum(((high + low) / 2), 19.1351), sum(adv40, 19.1351), 12.8742)),
+                5,
+            ),
+            11.7584,
+        )
     )
 
 

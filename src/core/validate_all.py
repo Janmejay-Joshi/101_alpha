@@ -26,8 +26,9 @@ def runner(include=[], exclude=[]):
 
 
 if __name__ == "__main__":
-    # Excluded Due to missing Inputs:
+    # Excluded Due to missing Inputs and operators:
     #   Market Cap, IndClass
+    #   Arg min / max
     excludes = [
         48,
         56,
@@ -48,6 +49,11 @@ if __name__ == "__main__":
         93,
         97,
         100,
+        1,
+        57,
+        60,
+        96,
+        98,
     ]
     includes = [101, 41]
 
