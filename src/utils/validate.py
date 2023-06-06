@@ -21,7 +21,7 @@ def validate_alpha(alpha, num_buckets=10):
 
         alpha_candles = day_candles[["date"]]
 
-        alpha_candles.loc[:, alpha_name] = alpha_runner(
+        alpha_candles.loc[:, alpha_name] = -1 * alpha_runner( 
             alpha=alpha, day_candles=day_candles
         )
         
@@ -29,13 +29,13 @@ def validate_alpha(alpha, num_buckets=10):
             alpha_name
         ].rank(ascending=False)
         
-        alpha_candles.loc[:,'liquidity'] = day_candles.volume*day_candles.close
+        day_candles.loc[:,'liquidity'] = day_candles.volume*day_candles.close
             
 
-        alpha_candles.loc[:, 'liquidity_20'] = day_candles.groupby('symbol')['liquidity'].transform(
+        day_candles.loc[:, 'liquidity_20'] = day_candles.groupby('symbol')['liquidity'].transform(
             lambda x: x.rolling(20).mean())
 
-        alpha_candles.loc[:, "liquidity_rank"] = day_candles.groupby("date")[
+        day_candles.loc[:, "liquidity_rank"] = day_candles.groupby("date")[
                 "liquidity_20"
             ].rank(ascending=False)
         
@@ -77,8 +77,11 @@ def validate_alpha(alpha, num_buckets=10):
 
         plt.clf()
         plt.title(alpha_name)
+        plt.ylabel('Next Day Intraday Return')
+        plt.xlabel('Bucket Number')
+        
         plt.bar(t_df[alpha_bucket_name], t_df.next_day_intraday_return)
-        plt.savefig(f"./cache/out/{alpha_name}.png")
+        plt.savefig(f"./cache/out/{alpha_name}.png", bbox_inches='tight' ,dpi=100)
 
     except Exception as e:
         print(alpha, inspect.signature(alpha), e)
