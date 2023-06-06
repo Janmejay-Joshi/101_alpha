@@ -24,13 +24,24 @@ def validate_alpha(alpha, num_buckets=10):
         alpha_candles.loc[:, alpha_name] = alpha_runner(
             alpha=alpha, day_candles=day_candles
         )
+        
         alpha_candles.loc[:, f"{alpha_name}_rank"] = alpha_candles.groupby("date")[
             alpha_name
         ].rank(ascending=False)
+        
+        alpha_candles.loc[:,'liquidity'] = day_candles.volume*day_candles.close
+            
 
+        alpha_candles.loc[:, 'liquidity_20'] = day_candles.groupby('symbol')['liquidity'].transform(
+            lambda x: x.rolling(20).mean())
+
+        alpha_candles.loc[:, "liquidity_rank"] = day_candles.groupby("date")[
+                "liquidity_20"
+            ].rank(ascending=False)
+        
         alpha_candles.loc[:, "is_top500"] = np.where(
-            (alpha_candles[f"{alpha_name}_rank"] <= 500), True, False
-        )
+                (day_candles["liquidity_rank"] <= 500), True, False
+            )
 
         alpha_candles.loc[:, "intraday_return"] = (
             day_candles.close / day_candles.open - 1
@@ -66,7 +77,7 @@ def validate_alpha(alpha, num_buckets=10):
 
         plt.clf()
         plt.title(alpha_name)
-        plt.bar(t_df[alpha_bucket_name], -1 * t_df.next_day_intraday_return)
+        plt.bar(t_df[alpha_bucket_name], t_df.next_day_intraday_return)
         plt.savefig(f"./cache/out/{alpha_name}.png")
 
     except Exception as e:

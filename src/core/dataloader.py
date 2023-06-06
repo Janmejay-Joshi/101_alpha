@@ -5,6 +5,7 @@ from multiprocessing import Pool
 import pandas as pd
 import os
 
+from datetime import date, datetime
 
 day_candles = pd.DataFrame
 
@@ -17,9 +18,12 @@ def load_candles(load_from_cache=False):
 
     market = Market()
     day_candles = market.data_by_path(
-        interval="day", symbols=market.symbols("NIFTY 500"), path=market.nse_equity_path
+        interval="day", symbols=market.symbols("NIFTY MIDCAP 100"), path=market.nse_equity_path
     )
-
+    day_candles['date'] = pd.to_datetime(day_candles['date'])
+    day_candles = day_candles[day_candles['date'].dt.date > date(2020, 5, 1)]
+    day_candles.reset_index(inplace=True, drop=True)
+    
     procesed_day_candles = pd.DataFrame()
 
     unique_symbols = day_candles.symbol.unique()
@@ -43,7 +47,7 @@ def load_candles(load_from_cache=False):
 
 def worker(symbol):
     global day_candles
-
+    
     symbol_day_candles = day_candles[day_candles.symbol == symbol].copy(deep=False)
     processed_df = preprocess_candles(symbol_day_candles)
 
